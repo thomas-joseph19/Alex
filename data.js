@@ -137,5 +137,13 @@ const weekendJokes = [
     "Bro really tried to trade on a weekend. 💀"
 ];
 
-const tradingData = {};
+const tradingData = {
+    '2026-03-02': {
+        notes: 'Monthly aggregation (Feb 01 - Mar 02, 2026)',
+        trades: [
+            ...Array(50).fill({ time: '00:00', type: 'long', result: 'win', rr: 10 }),
+            ...Array(98).fill({ time: '00:00', type: 'long', result: 'loss' }),
+        ]
+    }
+};
 
