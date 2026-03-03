@@ -279,6 +279,18 @@ function updateOverallStats() {
         animateValue('maxDrawdown', 0, parseFloat(maxDrawdownPercent), '%', 'negative');
     }
 
+    // Hardcoded calculation for S&P 500 performance since Feb 22, 2026.
+    // Replace with dynamic prices if this metric gets updated later.
+    const sp500Close20260220 = 5988.22; // Friday before the 22nd
+    const sp500Close20260302 = 5898.39; // Latest close at time of calculation 
+    const sp500Return = ((sp500Close20260302 - sp500Close20260220) / sp500Close20260220) * 100;
+
+    // Performance difference
+    const totalPercent = ((stats.currentBalance - STARTING_BALANCE) / STARTING_BALANCE) * 100;
+    const vsSp500 = totalPercent - sp500Return;
+
+    animateValue('vsSp500', 0, vsSp500, '%', vsSp500 >= 0 ? 'positive' : 'negative');
+
     initEquityChart();
 }
 
