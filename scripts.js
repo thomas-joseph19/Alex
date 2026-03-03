@@ -22,8 +22,10 @@ function calculateDailyBalances() {
                 } else if (trade.result === 'win' && trade.rr) {
                     tradePnL = tradeRisk * trade.rr;
                     runningBalance += tradePnL;
+                } else if (trade.result === 'breakeven') {
+                    tradePnL = tradeRisk * 2; // Breakevens are a 2RR hit
+                    runningBalance += tradePnL;
                 }
-                // Breakevens don't change balance
 
                 tradeDetails.push({ risk: tradeRisk, pnl: tradePnL });
             });
@@ -54,6 +56,7 @@ function calculateDayStats(dayData, dateStr) {
     let totalPnL = 0;
     let lossTotal = 0;
     let winTotal = 0;
+    let breakevenTotal = 0;
 
     dayData.trades.forEach((trade, i) => {
         const detail = tradeDetails[i] || { risk: STARTING_BALANCE * RISK_PERCENT, pnl: 0 };
@@ -68,6 +71,10 @@ function calculateDayStats(dayData, dateStr) {
             totalPnL += detail.pnl;
         } else {
             breakevens++;
+            if (detail.pnl > 0) {
+                breakevenTotal += detail.pnl;
+                totalPnL += detail.pnl;
+            }
         }
     });
 
@@ -76,7 +83,7 @@ function calculateDayStats(dayData, dateStr) {
     const totalTrades = dayData.trades.length;
     const displayRisk = tradeDetails.length > 0 ? tradeDetails[0].risk : STARTING_BALANCE * RISK_PERCENT;
 
-    return { wins, losses, breakevens, totalPnL, totalTrades, winRate, dayRisk: displayRisk, lossTotal, winTotal, tradeDetails };
+    return { wins, losses, breakevens, totalPnL, totalTrades, winRate, dayRisk: displayRisk, lossTotal, winTotal, breakevenTotal, tradeDetails };
 }
 
 // Calculate overall stats from all trading data (with compounding)
@@ -830,6 +837,7 @@ function openModal(dateStr, isWeekend = false) {
                 </div>
                 <div class="modal-pnl-row">
                     <div class="modal-pnl-item loss"><span class="modal-pnl-label">Losses</span><span class="modal-pnl-value">${formatPnL(dayStats.lossTotal)}</span></div>
+                    <div class="modal-pnl-item win"><span class="modal-pnl-label">BE (2RR)</span><span class="modal-pnl-value" style="color: var(--accent);">${formatPnL(dayStats.breakevenTotal)}</span></div>
                     <div class="modal-pnl-item win"><span class="modal-pnl-label">Wins</span><span class="modal-pnl-value">${formatPnL(dayStats.winTotal)}</span></div>
                 </div>
                 ${notesHtml}

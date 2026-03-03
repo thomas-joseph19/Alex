@@ -2,7 +2,7 @@
 const STARTING_BALANCE = 100000;
 const RISK_PERCENT = 0.0025; // 0.25% risk per trade
 const RISK_PER_TRADE = STARTING_BALANCE * RISK_PERCENT;
-const IMAGE_BASE = 'https://raw.githubusercontent.com/thomas-joseph19/Alex/main/images/';
+const IMAGE_BASE = './images/';
 
 // S&P 500 monthly returns (year-month format: "YYYY-MM")
 const sp500MonthlyReturns = {
@@ -138,12 +138,41 @@ const weekendJokes = [
 ];
 
 const tradingData = {
-    '2026-03-02': {
-        notes: 'Monthly aggregation (Feb 01 - Mar 02, 2026)',
+    '2026-02-23': {
+        image: '02232026-11-0-6-5.png',
         trades: [
-            ...Array(50).fill({ time: '00:00', type: 'long', result: 'win', rr: 10 }),
-            ...Array(98).fill({ time: '00:00', type: 'long', result: 'loss' }),
+            ...Array(6).fill({ result: 'loss', type: 'long', time: '10:00' }),
+            ...Array(5).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+        ]
+    },
+    '2026-02-24': {
+        image: '02242026-8-0-5-4.png',
+        trades: [
+            ...Array(5).fill({ result: 'loss', type: 'long', time: '10:00' }),
+            ...Array(4).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+        ]
+    },
+    '2026-02-25': {
+        image: '02252026-10-0-7-3.png',
+        trades: [
+            ...Array(7).fill({ result: 'loss', type: 'long', time: '10:00' }),
+            ...Array(3).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+        ]
+    },
+    '2026-02-26': {
+        image: '02262026-9-1-3-5.png',
+        trades: [
+            { result: 'win', rr: 10, type: 'long', time: '10:00' },
+            ...Array(3).fill({ result: 'loss', type: 'long', time: '10:00' }),
+            ...Array(5).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+        ]
+    },
+    '2026-03-02': {
+        image: '03022026-10-3-6-1.png',
+        trades: [
+            ...Array(3).fill({ result: 'win', rr: 10, type: 'long', time: '10:00' }),
+            ...Array(6).fill({ result: 'loss', type: 'long', time: '10:00' }),
+            { result: 'breakeven', rr: 2, type: 'long', time: '10:00' }
         ]
     }
 };
-
