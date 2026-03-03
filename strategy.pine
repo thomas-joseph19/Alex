@@ -1,0 +1,429 @@
+//@version=5
+indicator("DTT Complete Framework - Phase 5 (Overlapping Trades)", overlay=true, max_lines_count=500, max_labels_count=500, max_boxes_count=500)
+
+// =========================================================================
+// INPUTS & TOGGLES
+// =========================================================================
+grp_ny   = "New York Session Models"
+show_ny  = input.bool(true, "Show NY Session", group=grp_ny)
+
+grp_ldn  = "London Session Models"
+show_ldn = input.bool(true, "Show London Session", group=grp_ldn)
+
+grp_asia = "Asia Session Models"
+show_asia = input.bool(true, "Show Asia Session", group=grp_asia)
+
+grp_liq  = "Phase 2: Liquidity"
+show_liq  = input.bool(true, "Show Swing Liquidity", group=grp_liq)
+show_fvg  = input.bool(true, "Show 15m FVGs", group=grp_liq)
+tol_pct   = input.float(0.1, "EQH/EQL Tolerance %", step=0.01, group=grp_liq) / 100
+pivot_len = input.int(5, "Pivot Length (Bars)", group=grp_liq)
+
+grp_p3    = "Phase 3: Signals"
+show_sigs = input.bool(true, "Show Confirmed Signals", group=grp_p3)
+
+grp_p4    = "Phase 4: SMT Divergence"
+use_smt   = input.bool(true, "Require SMT Confirmation", group=grp_p4)
+smt_sym   = input.symbol("CME_MINI:NQ1!", "Correlated Asset (e.g., NQ1!)", group=grp_p4)
+
+grp_p5       = "Phase 5: Trade Management"
+show_trade   = input.bool(true, "Draw Risk/Reward Boxes", group=grp_p5)
+use_fixed_sl = input.bool(true, "Use Fixed Tick Stop Loss instead of Sweep Wick", group=grp_p5)
+stop_ticks   = input.int(2, "Fixed Stop Loss (Ticks)", group=grp_p5, tooltip="Only applies if Fixed Tick SL is checked")
+target_rr    = input.float(10.0, "Target Risk/Reward Ratio", step=0.5, group=grp_p5, tooltip="Multiplier for your target (e.g., 2 = 1:2 RR, 10 = 1:10 RR)")
+
+// Unified Colors
+col_fakeout     = input.color(color.new(color.red, 85), "Stage 1: Fakeout Zone", group="Stage Colors")
+col_realmove    = input.color(color.new(color.green, 85), "Stage 2: Real Move Zone", group="Stage Colors")
+col_hinge       = input.color(color.new(color.blue, 85), "Stage 3: Hinge/Decision", group="Stage Colors")
+col_dist        = input.color(color.new(color.purple, 85), "Stage 4: Distribution", group="Stage Colors")
+col_outlier     = input.color(color.new(color.orange, 85), "Outlier Zone", group="Stage Colors")
+
+// =========================================================================
+// HELPER FUNCTIONS 
+// =========================================================================
+in_zone(sess) => 
+    not na(time(timeframe.period, sess, "America/New_York"))
+
+is_exact_time(h, m) => 
+    hour(time, "America/New_York") == h and minute(time, "America/New_York") == m
+
+draw_inner_interval(h, m, col, show_sess) =>
+    if show_sess and is_exact_time(h, m)
+        line.new(bar_index, low, bar_index, high, extend=extend.both, color=color.new(col, 50), style=line.style_dotted, width=1)
+
+// =========================================================================
+// PHASE 1: SESSION TIME MODELS
+// =========================================================================
+// --- NY ---
+judas_active = in_zone("0930-1020")
+m11_active   = in_zone("1030-1110")
+m110_active  = in_zone("1110-1147")
+m1001_active = in_zone("1235-1409")
+m111_active  = in_zone("1409-1600")
+
+bgcolor(show_ny and judas_active ? col_fakeout : na)
+bgcolor(show_ny and m11_active ? col_realmove : na)
+bgcolor(show_ny and m110_active ? col_hinge : na)
+bgcolor(show_ny and m1001_active ? col_dist : na)
+bgcolor(show_ny and m111_active ? col_outlier : na)
+
+var float root_judas = na
+var float root_m11 = na
+var float root_m110 = na
+var float root_m110_sec = na
+var float root_m1001 = na
+var float root_m111 = na
+
+if judas_active and not nz(judas_active[1])
+    root_judas := na
+if m11_active and not nz(m11_active[1])
+    root_m11 := na
+if m110_active and not nz(m110_active[1])
+    root_m110 := na
+    root_m110_sec := na
+if m1001_active and not nz(m1001_active[1])
+    root_m1001 := na
+if m111_active and not nz(m111_active[1])
+    root_m111 := na
+
+if show_ny and is_exact_time(09, 53)
+    root_judas := open
+if show_ny and is_exact_time(10, 34)
+    root_m11 := open
+if show_ny and is_exact_time(11, 10)
+    root_m110 := open
+if show_ny and is_exact_time(11, 21)
+    root_m110_sec := open
+if show_ny and is_exact_time(12, 35)
+    root_m1001 := open
+if show_ny and is_exact_time(14, 09)
+    root_m111 := open
+
+plot(show_ny and judas_active ? root_judas : na, color=color.red, style=plot.style_linebr, linewidth=2)
+plot(show_ny and m11_active ? root_m11 : na, color=color.green, style=plot.style_linebr, linewidth=2)
+plot(show_ny and m110_active ? root_m110 : na, color=color.blue, style=plot.style_linebr, linewidth=2)
+plot(show_ny and m110_active ? root_m110_sec : na, color=color.aqua, style=plot.style_linebr, linewidth=1)
+plot(show_ny and m1001_active ? root_m1001 : na, color=color.purple, style=plot.style_linebr, linewidth=2)
+plot(show_ny and m111_active ? root_m111 : na, color=color.orange, style=plot.style_linebr, linewidth=2)
+
+draw_inner_interval(09, 32, color.red, show_ny)
+draw_inner_interval(09, 47, color.red, show_ny)
+draw_inner_interval(10, 02, color.red, show_ny)
+draw_inner_interval(10, 34, color.green, show_ny)
+draw_inner_interval(10, 44, color.green, show_ny)
+draw_inner_interval(10, 52, color.green, show_ny)
+draw_inner_interval(11, 21, color.blue, show_ny)
+draw_inner_interval(11, 27, color.blue, show_ny)
+draw_inner_interval(11, 37, color.blue, show_ny)
+draw_inner_interval(13, 00, color.purple, show_ny)
+draw_inner_interval(13, 40, color.purple, show_ny)
+draw_inner_interval(13, 50, color.purple, show_ny)
+draw_inner_interval(14, 37, color.orange, show_ny)
+draw_inner_interval(15, 10, color.orange, show_ny)
+draw_inner_interval(15, 35, color.orange, show_ny)
+
+// --- LDN ---
+turncoat_active = in_zone("0300-0344")
+bishop_active   = in_zone("0344-0520")
+knight_active   = in_zone("0520-0639")
+bigben_active   = in_zone("0639-0930")
+ldn_full_active = in_zone("0300-0930")
+
+bgcolor(show_ldn and turncoat_active ? col_fakeout : na)
+bgcolor(show_ldn and bishop_active ? col_realmove : na)
+bgcolor(show_ldn and knight_active ? col_hinge : na)
+bgcolor(show_ldn and bigben_active ? col_outlier : na)
+
+var float root_turncoat = na
+var float root_bishop = na
+var float root_knight = na
+var float root_bigben = na
+
+if ldn_full_active and not nz(ldn_full_active[1])
+    root_turncoat := na
+if bishop_active and not nz(bishop_active[1])
+    root_bishop := na
+if knight_active and not nz(knight_active[1])
+    root_knight := na
+if bigben_active and not nz(bigben_active[1])
+    root_bigben := na
+
+if show_ldn and is_exact_time(03, 12)
+    root_turncoat := open
+if show_ldn and is_exact_time(04, 10)
+    root_bishop := open
+if show_ldn and is_exact_time(05, 29)
+    root_knight := open
+if show_ldn and is_exact_time(06, 58)
+    root_bigben := open
+
+plot(show_ldn and ldn_full_active ? root_turncoat : na, color=color.red, style=plot.style_linebr, linewidth=2)
+plot(show_ldn and bishop_active ? root_bishop : na, color=color.green, style=plot.style_linebr, linewidth=2)
+plot(show_ldn and knight_active ? root_knight : na, color=color.blue, style=plot.style_linebr, linewidth=2)
+plot(show_ldn and bigben_active ? root_bigben : na, color=color.orange, style=plot.style_linebr, linewidth=2)
+
+draw_inner_interval(03, 11, color.red, show_ldn)
+draw_inner_interval(03, 23, color.red, show_ldn)
+draw_inner_interval(03, 37, color.red, show_ldn)
+draw_inner_interval(03, 55, color.green, show_ldn)
+draw_inner_interval(04, 19, color.green, show_ldn)
+draw_inner_interval(04, 38, color.green, show_ldn)
+draw_inner_interval(05, 29, color.blue, show_ldn)
+draw_inner_interval(05, 48, color.blue, show_ldn)
+draw_inner_interval(06, 04, color.blue, show_ldn)
+draw_inner_interval(06, 58, color.orange, show_ldn)
+draw_inner_interval(07, 41, color.orange, show_ldn)
+draw_inner_interval(08, 15, color.orange, show_ldn)
+
+// --- ASIA ---
+damasu_active   = in_zone("1800-1901")
+osaka_active    = in_zone("1901-2114")
+kyoto_active    = in_zone("2114-2304")
+nagasaki_active = in_zone("2304-0400")
+
+bgcolor(show_asia and damasu_active ? col_fakeout : na)
+bgcolor(show_asia and osaka_active ? col_realmove : na)
+bgcolor(show_asia and kyoto_active ? col_hinge : na)
+bgcolor(show_asia and nagasaki_active ? col_outlier : na)
+
+var float root_damasu = na
+var float root_osaka = na
+var float root_kyoto = na
+var float root_nagasaki = na
+
+if damasu_active and not nz(damasu_active[1])
+    root_damasu := na
+if osaka_active and not nz(osaka_active[1])
+    root_osaka := na
+if kyoto_active and not nz(kyoto_active[1])
+    root_kyoto := na
+if nagasaki_active and not nz(nagasaki_active[1])
+    root_nagasaki := na
+
+if show_asia and is_exact_time(18, 07)
+    root_damasu := open
+if show_asia and is_exact_time(19, 37)
+    root_osaka := open
+if show_asia and is_exact_time(21, 44)
+    root_kyoto := open
+if show_asia and is_exact_time(01, 09)
+    root_nagasaki := open
+
+plot(show_asia and damasu_active ? root_damasu : na, color=color.red, style=plot.style_linebr, linewidth=2)
+plot(show_asia and osaka_active ? root_osaka : na, color=color.green, style=plot.style_linebr, linewidth=2)
+plot(show_asia and kyoto_active ? root_kyoto : na, color=color.blue, style=plot.style_linebr, linewidth=2)
+plot(show_asia and nagasaki_active ? root_nagasaki : na, color=color.orange, style=plot.style_linebr, linewidth=2)
+
+draw_inner_interval(18, 07, color.red, show_asia)
+draw_inner_interval(18, 22, color.red, show_asia)
+draw_inner_interval(18, 34, color.red, show_asia)
+draw_inner_interval(19, 16, color.green, show_asia)
+draw_inner_interval(19, 49, color.green, show_asia)
+draw_inner_interval(20, 16, color.green, show_asia)
+draw_inner_interval(21, 26, color.blue, show_asia)
+draw_inner_interval(21, 54, color.blue, show_asia)
+draw_inner_interval(22, 16, color.blue, show_asia)
+draw_inner_interval(23, 39, color.orange, show_asia)
+draw_inner_interval(01, 17, color.orange, show_asia)
+draw_inner_interval(01, 37, color.orange, show_asia)
+
+// =========================================================================
+// PHASE 2 & 4: LIQUIDITY & SMT PULL
+// =========================================================================
+ph = ta.pivothigh(high, pivot_len, pivot_len)
+pl = ta.pivotlow(low, pivot_len, pivot_len)
+
+var float last_ph = na
+var float last_pl = na
+
+if not na(ph)
+    last_ph := ph
+    if show_liq
+        label.new(bar_index[pivot_len], ph, "BSL", color=color.new(color.red, 80), style=label.style_label_down, textcolor=color.white, size=size.tiny)
+
+if not na(pl)
+    last_pl := pl
+    if show_liq
+        label.new(bar_index[pivot_len], pl, "SSL", color=color.new(color.green, 80), style=label.style_label_up, textcolor=color.white, size=size.tiny)
+
+// SMT Data Pull
+[smt_h, smt_l, smt_c] = request.security(smt_sym, timeframe.period, [high, low, close], ignore_invalid_symbol=true)
+
+var float smt_last_ph = na
+var float smt_last_pl = na
+
+smt_ph = ta.pivothigh(smt_h, pivot_len, pivot_len)
+smt_pl = ta.pivotlow(smt_l, pivot_len, pivot_len)
+
+if not na(smt_ph)
+    smt_last_ph := smt_ph
+if not na(smt_pl)
+    smt_last_pl := smt_pl
+
+// --- 15-Minute FVG Detection ---
+f_fvg_15m() => [low[0] > high[2], high[2], low[0], high[0] < low[2], low[2], high[0]]
+[is_bull_15m, bull_bot, bull_top, is_bear_15m, bear_top, bear_bot] = request.security(syminfo.tickerid, "15", f_fvg_15m())
+
+new_15m_bar = ta.change(time("15"))
+
+if show_fvg and is_bull_15m and new_15m_bar
+    box.new(bar_index, bull_top, bar_index + 30, bull_bot, border_color=color.new(color.green, 50), bgcolor=color.new(color.green, 85))
+if show_fvg and is_bear_15m and new_15m_bar
+    box.new(bar_index, bear_top, bar_index + 30, bear_bot, border_color=color.new(color.red, 50), bgcolor=color.new(color.red, 85))
+
+// =========================================================================
+// PHASE 3 & 4: CANDLE CONFIRMATION
+// =========================================================================
+any_active_zone = judas_active or m11_active or m110_active or m1001_active or m111_active or turncoat_active or bishop_active or knight_active or bigben_active or damasu_active or osaka_active or kyoto_active or nagasaki_active
+
+var bool zone_active_15m = false
+was_active_last_15m = zone_active_15m 
+
+// Natively track primary 15m
+var float htf_o = na
+var float htf_h = na
+var float htf_l = na
+var float htf_c = na
+var float prev_htf_o = na
+var float prev_htf_h = na
+var float prev_htf_l = na
+var float prev_htf_c = na
+
+// Natively track SMT 15m
+var float smt_htf_h = na
+var float smt_htf_l = na
+var float smt_prev_htf_h = na
+var float smt_prev_htf_l = na
+
+var int setup_state = 0 
+var float sweep_midpoint = na
+
+var bool print_bull_signal = false
+var bool print_bear_signal = false
+print_bull_signal := false
+print_bear_signal := false
+
+if new_15m_bar
+    prev_htf_o := htf_o, prev_htf_h := htf_h, prev_htf_l := htf_l, prev_htf_c := htf_c
+    smt_prev_htf_h := smt_htf_h, smt_prev_htf_l := smt_htf_l
+    
+    htf_o := open, htf_h := high, htf_l := low, htf_c := close
+    smt_htf_h := smt_h, smt_htf_l := smt_l
+    zone_active_15m := any_active_zone
+
+    // Confirmation Evaluate
+    if setup_state == 1 and prev_htf_c > sweep_midpoint
+        print_bull_signal := true
+    if setup_state == -1 and prev_htf_c < sweep_midpoint
+        print_bear_signal := true
+        
+    setup_state := 0 
+
+    // Sweep Evaluate 
+    bull_swept = prev_htf_l < last_pl and prev_htf_c > last_pl
+    bear_swept = prev_htf_h > last_ph and prev_htf_c < last_ph
+
+    smt_bull_swept = smt_prev_htf_l < smt_last_pl
+    smt_bear_swept = smt_prev_htf_h > smt_last_ph
+
+    valid_bull_smt = use_smt ? (not na(smt_last_pl) and not smt_bull_swept) : true
+    valid_bear_smt = use_smt ? (not na(smt_last_ph) and not smt_bear_swept) : true
+
+    if bull_swept and was_active_last_15m and valid_bull_smt
+        sweep_midpoint := (prev_htf_o + prev_htf_c) / 2
+        setup_state := 1 
+        
+    if bear_swept and was_active_last_15m and valid_bear_smt
+        sweep_midpoint := (prev_htf_o + prev_htf_c) / 2
+        setup_state := -1 
+else
+    htf_h := math.max(htf_h, high), htf_l := math.min(htf_l, low), htf_c := close
+    smt_htf_h := math.max(smt_htf_h, smt_h), smt_htf_l := math.min(smt_htf_l, smt_l)
+    zone_active_15m := zone_active_15m or any_active_zone
+
+plotshape(show_sigs and print_bull_signal, title="Bullish Setup Confirmed", style=shape.triangleup, location=location.belowbar, color=color.new(color.green, 0), size=size.large)
+plotshape(show_sigs and print_bear_signal, title="Bearish Setup Confirmed", style=shape.triangledown, location=location.abovebar, color=color.new(color.red, 0), size=size.large)
+
+// =========================================================================
+// PHASE 5: TRADE MANAGEMENT (OVERLAPPING & ALTERNATING COLORS)
+// =========================================================================
+
+// UDT for tracking multiple active trades simultaneously
+type TradeData
+    int dir
+    float sl
+    float tp
+    box risk_bx
+    box reward_bx
+
+var active_trades = array.new<TradeData>()
+var int color_idx = 0
+
+// 1. Evaluate Ongoing Trades Bar-by-Bar
+if array.size(active_trades) > 0
+    // Loop backwards to safely remove elements while iterating
+    for i = array.size(active_trades) - 1 to 0
+        TradeData tr = array.get(active_trades, i)
+        bool close_trade = false
+        
+        if tr.dir == 1 // LONG TRADE
+            if low <= tr.sl or high >= tr.tp or not any_active_zone
+                close_trade := true
+        else if tr.dir == -1 // SHORT TRADE
+            if high >= tr.sl or low <= tr.tp or not any_active_zone
+                close_trade := true
+
+        // Extend active boxes to current candle
+        if show_trade and not na(tr.risk_bx)
+            box.set_right(tr.risk_bx, bar_index)
+            box.set_right(tr.reward_bx, bar_index)
+
+        // Remove trade from active tracking if conditions are met
+        if close_trade
+            array.remove(active_trades, i)
+
+
+// 2. Initiate New Trades (Overlaps Allowed)
+if print_bull_signal
+    float t_entry = close
+    float t_sl = use_fixed_sl ? t_entry - (stop_ticks * syminfo.mintick) : prev_htf_l
+    float risk = t_entry - t_sl
+    float t_tp2 = t_entry + (risk * target_rr)
+    
+    // Cycle through 3 requested color themes
+    color c_rwd = color_idx == 0 ? color.green : color_idx == 1 ? color.purple : color.blue
+    color c_rsk = color_idx == 0 ? color.red   : color_idx == 1 ? color.gray   : color.white
+    
+    box r_box = na
+    box w_box = na
+    
+    if show_trade
+        w_box := box.new(left=bar_index, top=t_tp2, right=bar_index, bottom=t_entry, border_color=color.new(c_rwd, 50), border_width=1, bgcolor=color.new(c_rwd, 85))
+        r_box := box.new(left=bar_index, top=t_entry, right=bar_index, bottom=t_sl, border_color=color.new(c_rsk, 50), border_width=1, bgcolor=color.new(c_rsk, 85))
+
+    // Store trade in memory array
+    array.push(active_trades, TradeData.new(1, t_sl, t_tp2, r_box, w_box))
+    color_idx := (color_idx + 1) % 3
+
+
+if print_bear_signal
+    float t_entry = close
+    float t_sl = use_fixed_sl ? t_entry + (stop_ticks * syminfo.mintick) : prev_htf_h
+    float risk = t_sl - t_entry
+    float t_tp2 = t_entry - (risk * target_rr)
+    
+    // Cycle through 3 requested color themes
+    color c_rwd = color_idx == 0 ? color.green : color_idx == 1 ? color.purple : color.blue
+    color c_rsk = color_idx == 0 ? color.red   : color_idx == 1 ? color.gray   : color.white
+    
+    box r_box = na
+    box w_box = na
+    
+    if show_trade
+        r_box := box.new(left=bar_index, top=t_sl, right=bar_index, bottom=t_entry, border_color=color.new(c_rsk, 50), border_width=1, bgcolor=color.new(c_rsk, 85))
+        w_box := box.new(left=bar_index, top=t_entry, right=bar_index, bottom=t_tp2, border_color=color.new(c_rwd, 50), border_width=1, bgcolor=color.new(c_rwd, 85))
+
+    // Store trade in memory array
+    array.push(active_trades, TradeData.new(-1, t_sl, t_tp2, r_box, w_box))
+    color_idx := (color_idx + 1) % 3
