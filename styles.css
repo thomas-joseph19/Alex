@@ -911,7 +911,7 @@ h1 {
     margin-top: 0.5rem;
 }
 
-.sp500-bar-pablo,
+.sp500-bar-Alex,
 .sp500-bar-sp500 {
     height: 100%;
     transition: all 0.5s ease;
@@ -919,12 +919,12 @@ h1 {
     min-width: 2px;
 }
 
-.sp500-bar-pablo.green {
+.sp500-bar-Alex.green {
     background: linear-gradient(90deg, var(--green) 0%, #22c55e 100%);
     box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
 }
 
-.sp500-bar-pablo.red {
+.sp500-bar-Alex.red {
     background: linear-gradient(90deg, var(--red) 0%, #ef4444 100%);
     box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }

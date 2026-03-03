@@ -1,4 +1,4 @@
-# 🎨 pablo
+# 🎨 Alex
 
 <p align="center">
   <img src="https://img.shields.io/badge/TradingView-Pine%20Script%20v6-blue?style=for-the-badge&logo=tradingview" alt="TradingView">
@@ -11,7 +11,7 @@
 </p>
 
 <p align="center">
-  <b>Trust Pablo.</b>
+  <b>Trust Alex.</b>
 </p>
 
 ---
@@ -28,9 +28,9 @@ Unfortunately, buying a $600 TradingView plan to backtest this isn't something I
 
 But for now, data will be collected manually — the old fashioned way.
 
-I will put pablo on a funded account in February if it stays profitable through January though!
+I will put Alex on a funded account in February if it stays profitable through January though!
 
-Daily recaps and performance tracking will be uploaded on the **[Pablo website](https://cuzohh.github.io/pablo/)**
+Daily recaps and performance tracking will be uploaded on the **[Alex website](https://thomas-joseph19.github.io/Alex/)**
 
 ---
 
@@ -43,3 +43,4 @@ Daily recaps and performance tracking will be uploaded on the **[Pablo website](
 <p align="center">
   Made with too many sleepless nights.
 </p>
+

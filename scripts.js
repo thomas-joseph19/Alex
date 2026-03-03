@@ -554,21 +554,21 @@ function updateMonthlyRecap(year, month) {
 
             let winLossMessage = "";
             if (vsSp500 > 0) {
-                winLossMessage = isPast ? `Pablo won by ${absDifference.toFixed(2)}%` : `Pablo's winning by ${absDifference.toFixed(2)}%`;
+                winLossMessage = isPast ? `Alex won by ${absDifference.toFixed(2)}%` : `Alex's winning by ${absDifference.toFixed(2)}%`;
             } else if (vsSp500 < 0) {
-                winLossMessage = isPast ? `Pablo lost by ${absDifference.toFixed(2)}%` : `Pablo's losing by ${absDifference.toFixed(2)}%`;
+                winLossMessage = isPast ? `Alex lost by ${absDifference.toFixed(2)}%` : `Alex's losing by ${absDifference.toFixed(2)}%`;
             } else {
-                winLossMessage = isPast ? "Pablo tied with the S&P 500" : "Pablo's tied with the S&P 500";
+                winLossMessage = isPast ? "Alex tied with the S&P 500" : "Alex's tied with the S&P 500";
             }
 
-            const funnyMessage = vsSp500 > 0 ? pabloWinningMessages[Math.floor(Math.random() * pabloWinningMessages.length)]
-                : vsSp500 < 0 ? pabloLosingMessages[Math.floor(Math.random() * pabloLosingMessages.length)] : '';
+            const funnyMessage = vsSp500 > 0 ? AlexWinningMessages[Math.floor(Math.random() * AlexWinningMessages.length)]
+                : vsSp500 < 0 ? AlexLosingMessages[Math.floor(Math.random() * AlexLosingMessages.length)] : '';
 
             const blueHex = '#3b82f6';
-            const pabloIsPositive = monthlyReturn >= 0;
-            const pabloColor = pabloIsPositive ? 'var(--green)' : 'var(--red)';
-            const pabloBg = pabloIsPositive ? 'linear-gradient(90deg, var(--green) 0%, #22c55e 100%)' : 'linear-gradient(90deg, var(--red) 0%, #ef4444 100%)';
-            const pabloShadow = pabloIsPositive ? '0 0 8px rgba(16, 185, 129, 0.4)' : '0 0 8px rgba(239, 68, 68, 0.4)';
+            const AlexIsPositive = monthlyReturn >= 0;
+            const AlexColor = AlexIsPositive ? 'var(--green)' : 'var(--red)';
+            const AlexBg = AlexIsPositive ? 'linear-gradient(90deg, var(--green) 0%, #22c55e 100%)' : 'linear-gradient(90deg, var(--red) 0%, #ef4444 100%)';
+            const AlexShadow = AlexIsPositive ? '0 0 8px rgba(16, 185, 129, 0.4)' : '0 0 8px rgba(239, 68, 68, 0.4)';
 
             const spIsPositive = sp500Return >= 0;
             const sp500Color = spIsPositive ? blueHex : 'var(--red)';
@@ -576,21 +576,21 @@ function updateMonthlyRecap(year, month) {
             const sp500Bg = spIsPositive ? `linear-gradient(90deg, ${blueHex} 0%, #60a5fa 100%)` : 'linear-gradient(90deg, var(--red) 0%, #ef4444 100%)';
             const sp500Shadow = spIsPositive ? `0 0 8px rgba(59, 130, 246, 0.4)` : '0 0 8px rgba(239, 68, 68, 0.4)';
 
-            const absPablo = Math.abs(monthlyReturn);
+            const absAlex = Math.abs(monthlyReturn);
             const absSp500 = Math.abs(sp500Return);
-            let pabloWidth = 50;
+            let AlexWidth = 50;
             let sp500Width = 50;
-            const totalAbs = absPablo + absSp500;
+            const totalAbs = absAlex + absSp500;
 
             if (totalAbs > 0.001) {
-                const rawPabloPct = (absPablo / totalAbs) * 100;
+                const rawAlexPct = (absAlex / totalAbs) * 100;
                 const rawSp500Pct = (absSp500 / totalAbs) * 100;
-                if (rawPabloPct < 15) {
-                    pabloWidth = 15; sp500Width = 85;
+                if (rawAlexPct < 15) {
+                    AlexWidth = 15; sp500Width = 85;
                 } else if (rawSp500Pct < 15) {
-                    sp500Width = 15; pabloWidth = 85;
+                    sp500Width = 15; AlexWidth = 85;
                 } else {
-                    pabloWidth = rawPabloPct; sp500Width = rawSp500Pct;
+                    AlexWidth = rawAlexPct; sp500Width = rawSp500Pct;
                 }
             }
 
@@ -599,12 +599,12 @@ function updateMonthlyRecap(year, month) {
             recapStats.innerHTML += `
                 <div class="recap-stat days-bar-container" style="grid-column: 1 / -1;">
                     <div class="days-bar-header">
-                        <span style="color: ${pabloColor}; font-weight: 600;">🎨 Pablo ${monthlyReturn >= 0 ? '+' : ''}${monthlyReturn.toFixed(2)}%</span>
+                        <span style="color: ${AlexColor}; font-weight: 600;">🎨 Alex ${monthlyReturn >= 0 ? '+' : ''}${monthlyReturn.toFixed(2)}%</span>
                         <span style="color: var(--text-dim);">vs</span>
                         <span style="color: ${sp500Color}; font-weight: 600;">${sp500Icon} S&P 500 ${sp500Return >= 0 ? '+' : ''}${sp500Return.toFixed(2)}%</span>
                     </div>
                     <div class="sp500-comparison-bar" style="gap: 4px; background: transparent; box-shadow: none;">
-                        <div style="width: ${pabloWidth}%; height: 100%; border-radius: 4px; background: ${pabloBg}; box-shadow: ${pabloShadow}; transition: all 0.5s ease;"></div>
+                        <div style="width: ${AlexWidth}%; height: 100%; border-radius: 4px; background: ${AlexBg}; box-shadow: ${AlexShadow}; transition: all 0.5s ease;"></div>
                         <div style="width: ${sp500Width}%; height: 100%; border-radius: 4px; background: ${sp500Bg}; box-shadow: ${sp500Shadow}; transition: all 0.5s ease;"></div>
                     </div>
                     <div style="margin-top: 0.75rem; font-size: 0.875rem; font-weight: 500; color: ${winLossColor}; text-align: center;">${winLossMessage}</div>
@@ -837,15 +837,15 @@ function openModal(dateStr, isWeekend = false) {
             `;
         } else {
             const noTradeMessages = [
-                { emoji: '😴', text: 'Maybe Pablo was taking a nap.' },
-                { emoji: '🎨', text: 'Pablo was busy painting masterpieces instead of trading.' },
-                { emoji: '🧘', text: 'Pablo was meditating on market conditions. No valid setups found.' },
-                { emoji: '☕', text: 'Pablo was sipping coffee, waiting for the perfect entry. None came.' },
-                { emoji: '🔍', text: 'Pablo searched all day but found no valid setups. Patience is key.' },
-                { emoji: '📚', text: 'Pablo was studying the charts. Sometimes the best trade is no trade.' },
-                { emoji: '🎯', text: 'Pablo was waiting for the perfect setup. Today wasn\'t the day.' },
-                { emoji: '🏖️', text: 'Pablo took a mental health day. Markets can wait.' },
-                { emoji: '🍕', text: 'Pablo was ordering pizza. Sometimes you just need a break.' }
+                { emoji: '😴', text: 'Maybe Alex was taking a nap.' },
+                { emoji: '🎨', text: 'Alex was busy painting masterpieces instead of trading.' },
+                { emoji: '🧘', text: 'Alex was meditating on market conditions. No valid setups found.' },
+                { emoji: '☕', text: 'Alex was sipping coffee, waiting for the perfect entry. None came.' },
+                { emoji: '🔍', text: 'Alex searched all day but found no valid setups. Patience is key.' },
+                { emoji: '📚', text: 'Alex was studying the charts. Sometimes the best trade is no trade.' },
+                { emoji: '🎯', text: 'Alex was waiting for the perfect setup. Today wasn\'t the day.' },
+                { emoji: '🏖️', text: 'Alex took a mental health day. Markets can wait.' },
+                { emoji: '🍕', text: 'Alex was ordering pizza. Sometimes you just need a break.' }
             ];
             const randomMessage = noTradeMessages[Math.floor(Math.random() * noTradeMessages.length)];
             content.innerHTML = `<div class="no-data"><span class="no-data-emoji">${randomMessage.emoji}</span><p>No trades recorded for this day.</p><p style="margin-top: 0.5rem; font-size: 0.9rem; color: var(--text-dim);">${randomMessage.text}</p></div>`;
@@ -1334,3 +1334,4 @@ if (document.readyState === 'loading') {
     initCanvasBackground();
     initSmoothScroll();
 }
+
