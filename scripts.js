@@ -23,7 +23,7 @@ function calculateDailyBalances() {
                     tradePnL = tradeRisk * trade.rr;
                     runningBalance += tradePnL;
                 } else if (trade.result === 'breakeven') {
-                    tradePnL = tradeRisk * 2; // Breakevens are a 2RR hit
+                    tradePnL = tradeRisk * 1; // Breakevens are a 1RR hit
                     runningBalance += tradePnL;
                 }
 
@@ -849,7 +849,7 @@ function openModal(dateStr, isWeekend = false) {
                 </div>
                 <div class="modal-pnl-row">
                     <div class="modal-pnl-item loss"><span class="modal-pnl-label">Losses</span><span class="modal-pnl-value">${formatPnL(dayStats.lossTotal)}</span></div>
-                    <div class="modal-pnl-item win"><span class="modal-pnl-label">BE (2RR)</span><span class="modal-pnl-value" style="color: var(--accent);">${formatPnL(dayStats.breakevenTotal)}</span></div>
+                    <div class="modal-pnl-item win"><span class="modal-pnl-label">BE (1RR)</span><span class="modal-pnl-value" style="color: var(--accent);">${formatPnL(dayStats.breakevenTotal)}</span></div>
                     <div class="modal-pnl-item win"><span class="modal-pnl-label">Wins</span><span class="modal-pnl-value">${formatPnL(dayStats.winTotal)}</span></div>
                 </div>
                 ${notesHtml}

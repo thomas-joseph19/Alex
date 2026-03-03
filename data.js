@@ -142,21 +142,21 @@ const tradingData = {
         image: '02232026-11-0-6-5.png',
         trades: [
             ...Array(6).fill({ result: 'loss', type: 'long', time: '10:00' }),
-            ...Array(5).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+            ...Array(5).fill({ result: 'breakeven', rr: 1, type: 'long', time: '10:00' })
         ]
     },
     '2026-02-24': {
         image: '02242026-8-0-5-4.png',
         trades: [
             ...Array(5).fill({ result: 'loss', type: 'long', time: '10:00' }),
-            ...Array(4).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+            ...Array(4).fill({ result: 'breakeven', rr: 1, type: 'long', time: '10:00' })
         ]
     },
     '2026-02-25': {
         image: '02252026-10-0-7-3.png',
         trades: [
             ...Array(7).fill({ result: 'loss', type: 'long', time: '10:00' }),
-            ...Array(3).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+            ...Array(3).fill({ result: 'breakeven', rr: 1, type: 'long', time: '10:00' })
         ]
     },
     '2026-02-26': {
@@ -164,7 +164,7 @@ const tradingData = {
         trades: [
             { result: 'win', rr: 10, type: 'long', time: '10:00' },
             ...Array(3).fill({ result: 'loss', type: 'long', time: '10:00' }),
-            ...Array(5).fill({ result: 'breakeven', rr: 2, type: 'long', time: '10:00' })
+            ...Array(5).fill({ result: 'breakeven', rr: 1, type: 'long', time: '10:00' })
         ]
     },
     '2026-03-02': {
@@ -172,7 +172,7 @@ const tradingData = {
         trades: [
             ...Array(3).fill({ result: 'win', rr: 10, type: 'long', time: '10:00' }),
             ...Array(6).fill({ result: 'loss', type: 'long', time: '10:00' }),
-            { result: 'breakeven', rr: 2, type: 'long', time: '10:00' }
+            { result: 'breakeven', rr: 1, type: 'long', time: '10:00' }
         ]
     }
 };
