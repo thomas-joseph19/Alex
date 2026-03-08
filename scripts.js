@@ -23,7 +23,8 @@ function calculateDailyBalances() {
                     tradePnL = tradeRisk * trade.rr;
                     runningBalance += tradePnL;
                 } else if (trade.result === 'breakeven') {
-                    tradePnL = tradeRisk * 1; // Breakevens are a 1RR hit
+                    // Breakevens are typically a 1RR hit, but can have a specific RR if partials are taken.
+                    tradePnL = tradeRisk * (trade.rr !== undefined ? trade.rr : 1);
                     runningBalance += tradePnL;
                 }
 

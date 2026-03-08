@@ -176,7 +176,7 @@ const tradingData = {
         ]
     },
     '2026-03-03': {
-        image: '03032026-11-2-5-4.png',
+        image: '03032026-11-2-5-4..png',
         trades: [
             ...Array(2).fill({ result: 'win', rr: 10, type: 'long', time: '10:00' }),
             ...Array(5).fill({ result: 'loss', type: 'long', time: '10:00' }),
@@ -184,10 +184,33 @@ const tradingData = {
         ]
     },
     '2026-03-04': {
-        image: '03042026-6-0-3-3.png',
+        image: '03042026-6-0-3-3.png.png',
         trades: [
             ...Array(3).fill({ result: 'breakeven', rr: 1, type: 'long', time: '10:00' }),
             ...Array(3).fill({ result: 'loss', type: 'long', time: '10:00' })
+        ]
+    },
+    '2026-03-05': {
+        image: '03052026-6-0-3-3.png',
+        trades: [
+            { result: 'breakeven', rr: 1, type: 'long', time: '10:00' },
+            { result: 'breakeven', rr: 1, type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'breakeven', rr: 1, type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' }
+        ]
+    },
+    '2026-03-06': {
+        image: '03062026-7-0-4-3.png',
+        trades: [
+            { result: 'breakeven', rr: 1.4, type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'breakeven', rr: 1.4, type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'loss', type: 'long', time: '10:00' },
+            { result: 'breakeven', rr: 1.4, type: 'long', time: '10:00' }
         ]
     }
 };

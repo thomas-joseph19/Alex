@@ -99,10 +99,15 @@
                         <span
                             style="font-family: 'JetBrains Mono', monospace; color: var(--accent); font-weight: 600; font-size: 0.9rem;">March
                             5, 2026</span>
-                        <span style="color: var(--text-dim); font-size: 0.85rem;">DTT Script Transformation & Order Engine Upgrade</span>
+                        <span style="color: var(--text-dim); font-size: 0.85rem;">Partial Take Profit & Trailing Stop
+                            Refinement</span>
                     </div>
                     <p style="color: var(--text); line-height: 1.6; margin: 0;">
-                        Transformed the original DTT script into a fully backtestable trading strategy that now uses Volume Profile standard deviations and Overnight Inventory to filter institutional entries. The order engine was massively upgraded to handle up to 5 scaled Take Profit levels, automatic +1RR Break Even trailing, and seamless overlapping trades. Charts are now fully optimized for AI vision models with explicit Risk/Reward text tags for instant PnL calculation.
+                        The order engine's management has been refined: Once price hits 2 RR, the Stop Loss is
+                        automatically trailed to +1 RR. A structured partial take-profit schedule is now in place: 40%
+                        at 2.5 RR, 20% at 4 RR, 20% at 6 RR, 10% at 8 RR, and the remaining 10% at 10 RR. The Stop Loss
+                        does not move past +1 RR, securing a consistent profit floor for winning trades while allowing
+                        runners to capture extreme moves.
                     </p>
                 </div>
                 <div class="update-item"
